@@ -1,0 +1,5 @@
+baseURL = "https://lebaron.sh/"
+title = "Le Baron de Charlus"
+
+[taxonomies]
+  tag = "tags"
