@@ -57,6 +57,11 @@ a {
   padding: 0;
 }
 
+.tag-list {
+  list-style: none;
+  padding: 0;
+}
+
 .post-item {
   margin-bottom: 1rem;
 }
