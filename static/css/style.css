@@ -1,0 +1,86 @@
+@font-face {
+  font-family: "Special Elite";
+  src: url("/fonts/SpecialElite-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --parchment: #f4ecd8;
+  --ink: #2b1d0e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--parchment);
+  color: var(--ink);
+  font-family: "Special Elite", monospace;
+  line-height: 1.6;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 3rem;
+}
+
+a {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.site-header {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.site-title {
+  font-size: 1.75rem;
+  text-decoration: none;
+}
+
+.site-nav a {
+  margin-right: 1rem;
+}
+
+.post-list {
+  list-style: none;
+  padding: 0;
+}
+
+.post-item {
+  margin-bottom: 1rem;
+}
+
+.post-date {
+  display: inline-block;
+  min-width: 6.5rem;
+  opacity: 0.75;
+}
+
+.post-tags a {
+  margin-right: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.post-meta {
+  opacity: 0.85;
+  margin-top: -0.5rem;
+}
+
+.site-footer {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 2rem;
+  opacity: 0.75;
+  font-size: 0.9rem;
+}
