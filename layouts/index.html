@@ -1,0 +1,15 @@
+{{ define "main" }}
+<ul class="post-list">
+  {{ range where .Site.RegularPages "Type" "posts" }}
+  <li class="post-item">
+    <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    {{ if .Params.tags }}
+    <span class="post-tags">
+      {{ range .Params.tags }}<a href="{{ "/tags/" | relURL }}{{ . | urlize }}/">#{{ . }}</a> {{ end }}
+    </span>
+    {{ end }}
+  </li>
+  {{ end }}
+</ul>
+{{ end }}
