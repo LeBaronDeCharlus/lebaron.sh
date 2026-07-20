@@ -38,7 +38,7 @@ hugo.toml          # site config
 ### Content model
 
 - **Posts** (`content/posts/*.md`): front matter includes `title`, `date`, `tags`, `draft`. Rendered in reverse-chronological order on the homepage.
-- **About page** (`content/about.md`): introduces the Le Baron de Charlus persona. Seeded with clearly marked placeholder text for the author to replace.
+- **About page** (`content/about.md`): introduces the Le Baron de Charlus persona.
 - **Tags**: enabled as a Hugo taxonomy, with a browsable `/tags/` index and per-tag pages.
 - **RSS**: Hugo's default `index.xml` feed generation is enabled (no custom work needed beyond default config).
 - **Seed content**: two sample posts, clearly marked as placeholders, included so templates have real content to render during development. Not intended as real posts to publish.

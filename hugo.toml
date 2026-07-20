@@ -1,5 +1,12 @@
 baseURL = "https://lebaron.sh/"
 title = "Le Baron de Charlus"
 
+[params]
+  description = "Notes on code, management & culture, from someone who has spent more than a decade moving through the ranks of IT: developer, SRE, engineering manager, and now director."
+
 [taxonomies]
   tag = "tags"
+
+[markup]
+  [markup.highlight]
+    noClasses = false

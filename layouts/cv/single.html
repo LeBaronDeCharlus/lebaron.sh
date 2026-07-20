@@ -1,0 +1,171 @@
+{{ define "head" }}
+{{ if .Params.jsonld }}
+{{ $j := .Params.jsonld }}
+{{ $data := dict
+  "@context" "https://schema.org"
+  "@type" "Person"
+  "name" $j.name
+  "alternateName" $j.alternateName
+  "jobTitle" $j.jobTitle
+  "description" .Params.metaDescription
+  "email" (printf "mailto:%s" $j.email)
+  "url" $j.url
+  "nationality" $j.nationality
+  "sameAs" $j.sameAs
+  "knowsLanguage" $j.knowsLanguage
+  "knowsAbout" $j.knowsAbout
+}}
+<script type="application/ld+json">{{ $data | jsonify (dict "indent" "  ") | safeJS }}</script>
+{{ end }}
+{{ end }}
+
+{{ define "main" }}
+<article class="cv-page">
+  <div class="man-bar">
+    <span>{{ .Params.manSection }}</span>
+  </div>
+
+  <section class="man-section">
+    <h2>NAME</h2>
+    <h1 class="man-indent man-h1"><strong>Le Baron</strong> <span class="man-dim">-</span> {{ .Params.tagline }}</h1>
+  </section>
+
+  {{ if .Params.synopsis }}
+  <section class="man-section">
+    <h2>SYNOPSIS</h2>
+    <p class="man-indent man-synopsis">
+      {{ range .Params.synopsis }}<span class="man-{{ .kind }}">{{ .text }}</span> {{ end }}
+    </p>
+  </section>
+  {{ end }}
+
+  {{ if .Params.profileSummary }}
+  <section class="man-section">
+    <h2>SUMMARY</h2>
+    <div class="man-indent man-stack">
+      {{ range .Params.profileSummary }}<p>{{ . | markdownify }}</p>{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.skills }}
+  <section class="man-section">
+    <h2>SKILLS</h2>
+    <div class="man-indent man-stack">
+      {{ range .Params.skills }}
+      <div>
+        <p class="man-skill-category">{{ .category }}</p>
+        {{ if .badges }}
+        <div class="skill-badges">
+          {{ range .badges }}<span class="skill-badge">{{ . }}</span>{{ end }}
+        </div>
+        {{ else if .text }}
+        <p class="man-indent man-skill-text">{{ .text }}</p>
+        {{ end }}
+      </div>
+      {{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.experience }}
+  <section class="man-section">
+    <h2>EXPERIENCE</h2>
+    <div class="man-indent man-stack-lg">
+      {{ range .Params.experience }}
+      <div class="xp-entry">
+        <div class="xp-header">
+          <span class="xp-role">{{ .role }}</span>
+          <span class="man-dim">@</span>
+          <span class="xp-company">{{ .company }}</span>
+        </div>
+        <p class="xp-period">{{ .period }}</p>
+        {{ if .summary }}<p class="xp-summary">{{ .summary }}</p>{{ end }}
+        {{ if .bullets }}
+        <ul class="xp-bullets">
+          {{ range .bullets }}<li>{{ . }}</li>{{ end }}
+        </ul>
+        {{ end }}
+        {{ if .tech }}<p class="xp-tech">$ tech: {{ .tech }}</p>{{ end }}
+      </div>
+      {{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.education }}
+  <section class="man-section">
+    <h2>EDUCATION</h2>
+    <div class="man-indent man-stack">
+      {{ range .Params.education }}<p>{{ . }}</p>{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.bio }}
+  <section class="man-section">
+    <h2>DESCRIPTION</h2>
+    <div class="man-indent man-stack">
+      {{ range .Params.bio }}<p>{{ . | markdownify }}</p>{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.options }}
+  <section class="man-section">
+    <h2>OPTIONS</h2>
+    <div class="man-indent man-stack">
+      {{ range .Params.options }}
+      <div>
+        <p class="man-opt-name">{{ .name }}</p>
+        <p class="man-indent man-opt-value">{{ .value }}</p>
+      </div>
+      {{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.files }}
+  <section class="man-section">
+    <h2>FILES</h2>
+    <div class="man-indent man-stack">
+      {{ range .Params.files }}<p class="man-file">{{ . }}</p>{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.notes }}
+  <section class="man-section">
+    <h2>NOTES</h2>
+    <div class="man-indent man-stack">
+      {{ range .Params.notes }}<p><span class="man-dim">$</span> {{ . }}</p>{{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{ if .Params.quote }}
+  <section class="man-section">
+    <h2>QUOTE</h2>
+    <blockquote class="man-quote">
+      <p>&ldquo;{{ .Params.quote.text }}&rdquo;</p>
+      <footer>{{ .Params.quote.author }}</footer>
+    </blockquote>
+  </section>
+  {{ end }}
+
+  {{ if .Params.seealso }}
+  <section class="man-section">
+    <h2>SEE ALSO</h2>
+    <p class="man-indent">
+      {{ range $i, $e := .Params.seealso }}{{ if $i }}, {{ end }}{{ if $e.href }}<a href="{{ $e.href }}">{{ $e.label }}</a>{{ else }}<span class="man-dim">{{ $e.label }}</span>{{ end }}{{ end }}
+    </p>
+  </section>
+  {{ end }}
+
+  <div class="man-bar man-bar-footer">
+    <span>{{ .Params.manOS }}</span>
+    <span>{{ .Params.manDate }}</span>
+    <span>{{ .Title }}</span>
+  </div>
+</article>
+{{ end }}

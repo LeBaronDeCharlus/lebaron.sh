@@ -3,15 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} &middot; {{ .Site.Title }}{{ end }}</title>
+  {{ $title := .Site.Title }}
+  {{ if not .IsHome }}{{ $title = printf "%s · %s" .Title .Site.Title }}{{ end }}
+  {{ $description := .Params.metaDescription }}
+  {{ if not $description }}
+    {{ if .IsPage }}{{ $description = .Summary | plainify | truncate 160 }}{{ end }}
+  {{ end }}
+  {{ if not $description }}{{ $description = .Site.Params.description }}{{ end }}
+  {{ $image := .Params.image }}
+  <title>{{ $title }}</title>
+  {{ if $description }}<meta name="description" content="{{ $description }}">{{ end }}
+  <meta property="og:site_name" content="{{ .Site.Title }}">
+  <meta property="og:title" content="{{ $title }}">
+  <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  {{ if $description }}<meta property="og:description" content="{{ $description }}">{{ end }}
+  {{ if $image }}<meta property="og:image" content="{{ $image | absURL }}">{{ end }}
+  {{ if .IsPage }}<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}
+  {{ range .Params.tags }}<meta property="article:tag" content="{{ . }}">{{ end }}
+  <meta name="twitter:card" content="{{ if $image }}summary_large_image{{ else }}summary{{ end }}">
+  <meta name="twitter:title" content="{{ $title }}">
+  {{ if $description }}<meta name="twitter:description" content="{{ $description }}">{{ end }}
+  {{ if $image }}<meta name="twitter:image" content="{{ $image | absURL }}">{{ end }}
+  <link rel="icon" type="image/png" href="{{ "favicon.png" | absURL }}">
   <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
   <link rel="alternate" type="application/rss+xml" href="{{ "index.xml" | relURL }}" title="{{ .Site.Title }}">
+  {{ block "head" . }}{{ end }}
 </head>
-<body>
+<body{{ if eq .Type "cv" }} class="cv-body"{{ end }}>
   {{ partial "header.html" . }}
   <main>
     {{ block "main" . }}{{ end }}
   </main>
   {{ partial "footer.html" . }}
+  {{ if hugo.IsProduction }}
+  <script data-goatcounter="https://lebarondecharlus.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+  {{ end }}
 </body>
 </html>
