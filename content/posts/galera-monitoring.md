@@ -5,17 +5,15 @@ tags: ["devops"]
 draft: false
 ---
 
-Monitoring a database in standalone mode is one thing, but when it comes to clustering, it's a little more complex.
+Monitoring a database in standalone mode is one thing, but clustering makes it a lot more complex.
 
-This is the case with Galera clustering (mariaDB/mysql). Zabbix (&co) offered me simple solutions for single database servers, but I didn't find a really interesting template for monitoring a Galera cluster for production.
+That's exactly the case with Galera clustering (MariaDB/MySQL). Zabbix and similar tools gave me simple solutions for single database servers, but I couldn't find a template I actually liked for monitoring a Galera cluster in production.
 
-So several questions, what to monitor, how to alert, what's the best method?
+So a few questions came up: what to monitor, how to alert, and what the best approach would be.
 
-I based myself on [the official Galera documentation](http://galeracluster.com/documentation-webpages/monitoringthecluster.html) to have all the important elements to monitor.
-For the choice of the Golang language, it seemed to me that it provided me with the necessary functionalities.
-As for the choice of alerting, I decided to use a Slack App.
+I used [the official Galera documentation](http://galeracluster.com/documentation-webpages/monitoringthecluster.html) as my reference for all the important elements to keep an eye on. I picked Go because it gave me the functionality I needed, and for alerting I went with a Slack app.
 
-Example of a healthy output :
+Example of a healthy output:
 
 ```
 > go run main.go
@@ -50,6 +48,6 @@ Example of a healthy output :
 ```
 
 
-You have to use the `slackApp` package in which I placed an exposed function `PayloadSlack()` to then customize your alerts.
+You need to use the `slackApp` package, where I've exposed a `PayloadSlack()` function so you can customize your alerts.
 
-The whole output is not displayed in the **STDOUT** when it is healthy. Nevertheless you just have to uncomment the println in the `main.go` to be able to perform your tests.
+The full output isn't printed to **STDOUT** when everything is healthy. If you want to run your own tests, just uncomment the println calls in `main.go`.

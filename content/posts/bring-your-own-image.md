@@ -5,24 +5,24 @@ tags: ["linux", "ovh"]
 draft: false
 ---
 
-When I was working at **OVHCloud** company, I've developed a feature called **BYOI** (Bring Your Own Image).
+While working at **OVHCloud**, I developed a feature called **BYOI** (Bring Your Own Image).
 
-**Bring Your Own Image** technology allows you to boot any cloud (or not) images on a baremetal.
+**Bring Your Own Image** technology lets you boot any cloud (or non-cloud) image on bare metal.
 
-Even if today not all editors are ready to provide completely agnostic images (and I mean **UEFI** ready and/or **legacy boot**), by triturating (**packer**) a bit the whole, we can have something functional.
+Not every vendor ships images that are fully agnostic yet (by that I mean ready for both **UEFI** and **legacy boot**), but with a bit of tinkering (**packer**), we can get something functional.
 
-This mark the first step towards the **Hybrid IAC**.
+This marks a first step towards **Hybrid IAC**.
 
 [The documentation is here](https://docs.ovh.com/gb/en/dedicated/bringyourownimage/)
 
-**What does it really do?**
+**What does it actually do?**
 
 - API deployment (+automation)
 - post-install scripting (+automation)
 - transparent installation and system (+security)
 - template customization (+security)
-- nova boot custom (+tech)
+- custom nova boot (+tech)
 
-A little warning, as I said above, not all images are ready to boot automatically yet, there are many bug-tracks opened on different editors because of unwanted behaviors at **boot time**, **grub config**, **init phase** etc
+One caveat: as mentioned above, not all images boot automatically yet. Several bug trackers are open across different vendors for issues at **boot time**, in **grub config**, during the **init phase**, and so on.
 
-If you see these errors via a **KVM/IPMI**, it means that the installation went well, but the sticking point is not the deployment technology itself, but the image installed on the disks.
+If you see these errors through **KVM/IPMI**, it actually means the deployment went well: the sticking point isn't the deployment technology itself, but the image installed on the disks.

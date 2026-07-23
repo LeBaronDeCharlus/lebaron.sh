@@ -7,13 +7,15 @@ draft: false
 
 ## Introduction
 
-Our team recently set out on an exciting journey to integrate Backstage, and this is the first in a series of articles documenting that experience. This piece covers the installation process and basic setup, but first, let’s dig into why we chose Backstage in the first place.
+![Backstage](/images/backstage-part-1/01-intro.png)
+
+Our team recently set out to integrate Backstage, and this is the first in a series of articles documenting that experience. This piece covers the installation process and basic setup, but first, let’s look at why we chose Backstage in the first place.
 
 ## Why Backstage?
 
 Backstage is an open platform for building developer portals, originally created by Spotify and now maintained under the Cloud Native Computing Foundation (CNCF). It gives teams a single, centralized place to manage services, tools, and documentation, letting developers discover, share, and collaborate on projects without hunting across a dozen different systems.
 
-Our challenge was simple: we had no centralized system to manage our diverse tools and documentation, which led to inefficiencies and missed opportunities for collaboration. Backstage looked like the ideal solution to streamline our processes and foster better teamwork.
+Our problem was simple: we had no centralized system to manage our diverse tools and documentation, which led to inefficiencies and missed opportunities for collaboration. Backstage looked like the ideal way to fix that and make it easier for the team to work together.
 
 ## Installation
 
@@ -21,7 +23,7 @@ Our challenge was simple: we had no centralized system to manage our diverse too
 
 Installing Backstage locally was our first step, mainly to get a feel for its capabilities. We followed the official documentation and opted for [Devbox](https://www.jetify.com/docs/devbox/quickstart/) for a smoother experience.
 
-***Read my complete Devbox article !***
+***Read my complete Devbox article!***
 
 *Related: [Streamlining Development Workflows with Devbox: A Technical Dive](/posts/devbox-technical-dive/)*
 
@@ -111,6 +113,8 @@ $ npx @backstage/create-app@latest
 
 Name your app **backstage-app** when prompted. Installation can take a while, and so can your CPU fans.
 
+![CPU fans working overtime during installation](/images/backstage-part-1/02-app-name-prompt.png)
+
 Once the installation completes, you’ll see instructions for the next steps:
 
 ```
@@ -140,6 +144,8 @@ Once it’s up and running, your Backstage application will be accessible at [ht
 
 Congratulations on successfully installing Backstage locally!
 
+![Backstage software catalog running locally](/images/backstage-part-1/03-running-app.png)
+
 ### Wait… Weren’t We Talking About Devbox Scripts?
 
 You’re absolutely right! Let’s use scripts to automate running our application.
@@ -166,7 +172,7 @@ Modify your **devbox.json** like this:
 }
 ```
 
-Now you can simply run this one command to start your Backstage application:
+Now you can start your Backstage application with a single command:
 
 ```
 $ devbox run start

@@ -5,14 +5,13 @@ tags: ["containers", "ovh"]
 draft: false
 ---
 
-With OVH Public Cloud, it is possible for you to control your OpenStack instances directly from the Nova client.
+With OVH Public Cloud, you can control your OpenStack instances directly from the Nova client.
 
-It is rather practical to go through the command line rather than having to access the manager which is often, let us say it, slow.
+Working from the command line is much more practical than going through the manager, which, let's be honest, is often slow.
 
-But to avoid having to prepare each time a working environment compatible with Nova, I find more interesting to directly create a Docker image for this purpose.
-In this way, no more need to install anything except the Docker daemon on its workstation.
+To avoid setting up a working Nova environment every time, I found it more convenient to package everything into a Docker image. That way, the only thing you need installed on your workstation is the Docker daemon.
 
-The DockerFile looks like :
+The Dockerfile looks like this:
 
 ```dockerfile
 FROM debian:latest
@@ -30,26 +29,26 @@ env OS_PASSWORD=""
 env OS_REGION_NAME=""
 ```
 
-Note that I use the basic debian image because I already have it locally, but you can replace the bone with the one you want and adapt the content of RUN.
+I used a plain Debian image here because I already had it locally, but feel free to swap in whichever base image you prefer and adjust the RUN instructions accordingly.
 
-You also need to fill the environment variables with information about your OpenStack env.
+You'll also need to fill in the environment variables with your OpenStack credentials.
 
-Let’s go with :
+Let's build it:
 
 ```bash
 sudo docker build -t clientNova .
 ```
 
-Then run your container as follow :
+Then run your container like this:
 
 ```bash
 sudo docker run --rm -it novaClient bash
 ```
 
-You can add alias to your `.bashrc` / `.zshrc`
+You can also add an alias to your `.bashrc` / `.zshrc`:
 
 ```bash
 alias nova="sudo docker run --rm -it novaClient bash"
 ```
 
-Enjoy !
+Enjoy!

@@ -5,22 +5,19 @@ tags: ["ovh", "linux"]
 draft: false
 ---
 
-You may have noticed this already: when you spin up an OVH Public Cloud (PCI) instance running Ubuntu with Vrack enabled, your VM won't have its private IP at boot time.
-So yes, I'm not a fan of Ubuntu, but sometimes you don't get to choose.
+You may have noticed this already: when you spin up an OVH Public Cloud (PCI) instance running Ubuntu with Vrack enabled, the VM won't have its private IP at boot time.
+I'm not a big fan of Ubuntu, but sometimes you don't get to choose.
 
 Anyway, long story short: no private IP, and that's a shame. (RT)
 
-The fix trick is stupid.
-Very stupid.
+The fix is stupid. Very stupid.
 
-Add:
+Add the following to the `/etc/network/interface` file:
 
 ```
 allow-hotplug ens4
 iface ens4 inet dhcp
 ```
-
-In the `/etc/network/interface` file.
 
 Then:
 
@@ -34,7 +31,7 @@ and
 ifup ens4
 ```
 
-That’s it
+That's it.
 
 I sent an email to OVH's mailing list ([cloud]), because I still find it strange that this bug exists at all.
 

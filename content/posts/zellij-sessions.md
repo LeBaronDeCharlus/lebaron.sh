@@ -5,9 +5,13 @@ tags: ["shell"]
 draft: false
 ---
 
-Quick post about `Zellij`, a great tool I've been using for a few weeks now as a `Tmux` replacement.
+![Zellij logo](/images/zellij.png)
 
-I kept missing a way to manage my `sessions` when starting a new `shell` or `terminal`, so I ended up building a quick feature to handle it on startup.
+Quick post about `Zellij`, a great tool I've been using for a few weeks as a `Tmux` replacement.
+
+I kept missing a way to manage my `sessions` whenever I started a new `shell` or `terminal`, so I built a quick feature to handle it on startup.
+
+![The session picker in action](/images/sessions.gif)
 
 ### Dependencies
 

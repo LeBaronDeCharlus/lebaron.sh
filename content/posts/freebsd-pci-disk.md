@@ -5,9 +5,9 @@ tags: ["ovh", "linux"]
 draft: false
 ---
 
-When you create an OVH Public Cloud instance under Freebsd with a certain amount of disk space, let’s say 50G, you will find that it is not applied on your partition.
+When you create an OVH Public Cloud instance running FreeBSD with a given amount of disk space, say 50G, you'll find that it isn't fully applied to your partition.
 
-First let's look at what we have:
+First, let's look at what we have:
 ```
 # gpart show
 =>      40  10239920  da0  GPT  (50G) [CORRUPT]
@@ -17,7 +17,7 @@ First let's look at what we have:
   10237952      2008       - free -  (1.0M)
 ```
 
-We note that our volume da0 is tagged as CORRUPT. Don't panic, everyone knows that the Freebsd handbook is great. I quote:
+Notice that our volume da0 is tagged as CORRUPT. Don't panic, the FreeBSD handbook has the answer, as always. Here's the relevant excerpt:
 
 > If the disk was formatted with the GPT partitioning scheme, it may show as “corrupted” because the GPT backup partition table is no longer at the end of the drive. Fix the backup partition table with gpart:
 ```
@@ -26,13 +26,13 @@ ada0 recovered
 ```
 
 
-Well, let's apply this to our server by replacing `ada0` by `da0` :
+Let's apply this to our server, replacing `ada0` with `da0`:
 ```
 # gpart recover da0
 da0 recovered
 ```
 
-Check :
+Let's check:
 ```
 # gpart show
 =>       40  104857520  da0  GPT  (50G)
@@ -42,8 +42,7 @@ Check :
    10237952   94619608       - free -  (45G)
 ```
 
-Much better!
-We see that our da0 "disk" has 50G. However if we look more closely at our system, we see that not all the space is present.
+Much better! Our da0 "disk" now shows 50G. However, if we look more closely at the system, we see that not all of that space is actually available.
 ```
 # df -h
 Filesystem            Size    Used   Avail Capacity  Mounted on
@@ -52,15 +51,15 @@ devfs                 1.0K    1.0K      0B   100%    /dev
 zroot                 4.2G     96K    4.2G     0%    /zroot
 ```
 
-Once again, don't panic. The handbook is our friend.
+Once again, no need to panic, the handbook has us covered.
 
-Let's apply the 45G free on our score :
+Let's apply the 45G of free space:
 ```
 # gpart resize -i 2 -a 4k -s 50G da0
 da0p2 resized
 ```
 
-Check :
+Let's check:
 ```
 # gpart show
 =>       40  104857520  da0  GPT  (50G)
@@ -70,7 +69,7 @@ Check :
    94373888   10483672       - free -  (5.0G)
 ```
 
-Well, we are moving forward, however, the space is not yet usable as the return from df :
+We're making progress, but the space still isn't usable, as confirmed by df:
 ```
 # df -h
 Filesystem            Size    Used   Avail Capacity  Mounted on
@@ -79,9 +78,9 @@ devfs                 1.0K    1.0K      0B   100%    /dev
 zroot                 4.2G     96K    4.2G     0%    /zroot
 ```
 
-We must ask to our zpool to use this space.
+We need to tell our zpool to use this space.
 
-Let’s first check our pool.
+Let's first check the pool's status.
 ```
 # zpool status
   pool: zroot
@@ -94,17 +93,17 @@ config:
 	  da0p2     ONLINE       0     0     0
 ```
 
-Ask it we want to autoexpand on zroot
+Enable autoexpand on zroot:
 ```
 # zpool set autoexpand=on zroot
 ```
 
-Apply it on da0p2 :
+Apply it to da0p2:
 ```
 # zpool online -e zroot /dev/da0p2
 ```
 
-Last check :
+One last check:
 ```
 # df -h
 Filesystem            Size    Used   Avail Capacity  Mounted on
@@ -113,4 +112,4 @@ devfs                 1.0K    1.0K      0B   100%    /dev
 zroot                  43G     96K     43G     0%    /zroot
 ```
 
-This is it !
+And that's it!

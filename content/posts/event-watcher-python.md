@@ -5,25 +5,25 @@ tags: ["python"]
 draft: false
 ---
 
-On one specific request, I had to work on the elaboration of an automating program reacting on SFTP users updates.  
-The main technical issue of this request is that the SFTP protocol does not have a logging system.
+For one specific request, I had to build an automated program that reacts to SFTP user updates.  
+The main technical challenge was that the SFTP protocol has no logging system of its own.
 
-I had heard about [the pyinotify library](https://github.com/seb-m/pyinotify/blob/master/python3/pyinotify.py) so I started working on it.  
-**The project is presented in its primary mechanism**, for more details, I invite you to read the sources.  
+I had heard about [the pyinotify library](https://github.com/seb-m/pyinotify/blob/master/python3/pyinotify.py), so I started working with it.  
+**This post covers the project's core mechanism**; for more detail, I invite you to read the source code.  
 
-#### Technical requests concerning the project
+#### Technical requirements for the project
 
-**Details of the context of realization:**  
-The program must monitor SFTP user actions. These users have their HomeDir which are NFS mounts.  
-The user can upload anything to his account, but the program must detect video uploads (in some formats) and then perform a series of successive actions.  
+**Context:**  
+The program needs to monitor SFTP user actions. Each user's home directory is an NFS mount.  
+Users can upload anything to their account, but the program must detect video uploads (in specific formats) and then trigger a series of actions.  
 
-**The operation should be as follows:**  
-For each detected video repository, the video must check the allowed format, then it must be converted to .flv, have metadata, have a scree nshot (video thumbnail) and an email must be sent to the SFTP user's email address.  
+**The workflow should be as follows:**  
+For each detected video, check that its format is allowed, convert it to .flv, generate its metadata, create a screenshot (video thumbnail), and send an email to the SFTP user's address.  
 
 #### Preparation
 
-Several specific details are binding to begin with. The main one being the association of the account user's mail to his own mail with the detection of the video repository.  
-That's why I chose to start on a static file, knowing in advance the list of users.  
+A few specific constraints had to be handled up front, the main one being how to associate a user's account with their email address once a video upload is detected.  
+That's why I chose to start with a static file, since the list of users is known in advance.  
 
 ```python
 # Création de la classe
@@ -47,7 +47,7 @@ user_test = Person(
         '/test.fr/')
 ```
 
-Then I worked on the _core_ of the program. First of all to get the information from my user file and to make a grouping by list.  
+Next, I worked on the _core_ of the program: first reading the information from the user file, then grouping it into lists.  
 
 ```python
 # Définition des listes
@@ -75,7 +75,7 @@ for users.obj in gc.get_objects():
         user_realpath.append(users.obj.realpath)
 ```
 
-The definition of a first function whose purpose will be the associative call with an ID position system.  
+The first function defined handles the associative lookup, using an ID-based position system.  
 
 ```python
 def owner_func():
@@ -95,10 +95,10 @@ def owner_func():
             print('The owner was not found.')
 ```
 
-#### Pyinotifier Introduction
+#### Introduction to Pyinotify
 
-Pyinotifier has functions related to the creation and deletion of data (IN_CREATE and IN_DELETE).  
-Once the basic setup was done, I used the basic definition to implement with the **owner_func()** function.  
+Pyinotify provides functions related to data creation and deletion (IN_CREATE and IN_DELETE).  
+Once the basic setup was done, I used these definitions to implement the **owner_func()** function.  
 
 ```python
 class EventHandler(pyinotify.ProcessEvent):
@@ -153,11 +153,11 @@ class EventHandler(pyinotify.ProcessEvent):
         print('===========================')
 ```
 
-**Explanations :**  
-The principle of Pyinotify is to create an automatic action at a given event. Let's take the deposit of a video corresponding to the right format as the event.  
-The **IN_CREATE** function is then triggered and will send us first information including: the creation date, the full path of the event, the relative path (HomeDir of the SFTP user), the user, his email...  
+**Explanation:**  
+Pyinotify's principle is to trigger an automatic action on a given event. Let's take the upload of a video in the right format as our event.  
+The **IN_CREATE** function is then triggered and gives us the initial information: the creation date, the full path of the event, the relative path (the SFTP user's home directory), the user, their email, and so on.  
 
-In a second step we apply the conversion to the right format (with **ffmpeg**). However, we have to make sure that the video is complete and submitted. This corresponds to the block :  
+In a second step, we convert the file to the right format (with **ffmpeg**). But first, we need to make sure the video has finished uploading. That's handled by this block:  
 
 ```python
         command = 'convert.bash '+str(event.pathname)
@@ -178,20 +178,20 @@ In a second step we apply the conversion to the right format (with **ffmpeg**). 
         print(command)
 ```
 
-Then we will be able to run the bash scripts in subprocess.  
+Once that's confirmed, we can run the bash scripts as subprocesses.  
 
-#### Interests
+#### Benefits
 
-The interests are multiple!  
-The first one is obvious since it is now possible to perform a logging on a service that was not natively available. The second one is that it is possible to set up a logging and PID system very simply.  
+There are several benefits here.  
+The first is obvious: it's now possible to log activity on a service that didn't natively support it. The second is that setting up a logging and PID system becomes very simple.  
 
 ```python
 notifier.loop(daemonize=True, callback=on_loop_func, pid_file='logs/pyinotify.pid', stdout='logs/%s.log' % timestr)
 ```
 
-This opens a very interesting new door on event automation by a Python subroutine that would take the work done by the kernel out of the box.  
+This opens up an interesting avenue for event automation, using a Python subroutine that builds directly on work the kernel already does out of the box.  
 
-I was just thinking of making a kind of API calling this type of operation scalable on different environments.  
-This project being in my famous **ToDoList** would be very close to a Master-Slaving system with certainly an imitation of what already exists with Puppet ... but in Python.  
+I've been thinking about building a kind of API to make this type of operation scalable across different environments.  
+This project, still sitting on my famous **ToDoList**, would end up close to a master/slave system, essentially an imitation of what already exists with Puppet, but in Python.  
 
-Wait and see what will be done !
+Wait and see what comes of it!

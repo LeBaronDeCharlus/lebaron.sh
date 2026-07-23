@@ -7,15 +7,15 @@ draft: false
 
 ## Why
 
-I’ve been recently doing some old shell scripts to quickly automatize and distribute actions that were made manually, I’ll write a post on it later. For now, I’d like to share with you how I’ve been coding a 100% shell loader library to use it in my scripts.
+I've recently been writing some shell scripts to automate and distribute actions that used to be done manually (I'll write a post about that later). For now, I'd like to share how I built a 100% shell-based loader library to use in my scripts.
 
-I’ve been looking on the net for an existing library, I’ve found some interesting Github projects, but it doesn’t appear to be “library” ready. Furthermore, it was mostly old basic ASCII templates and I wanted to give a try to modern loaders and spinners on shell.
+I looked around for an existing library and found a few interesting GitHub projects, but none of them felt ready to use as an actual library. Most were also limited to old, basic ASCII templates, and I wanted to try building something closer to modern loaders and spinners in shell.
 
-So I ended to create [`shloader`](https://github.com/kaderovski/shloader). (<- sorry, I had no idea how to name it)
+So I ended up creating [`shloader`](https://github.com/kaderovski/shloader). (Sorry, naming things has never been my strong suit.)
 
 ## Features
 
-shloader has nice features such as :
+shloader comes with a few nice features:
 
 - emoji support
 - loader support
@@ -26,9 +26,9 @@ shloader has nice features such as :
 
 ## Templating
 
-First, we need to create templates, one for each loader that will be displayed. I’ve decided to use shell `array` so we can work on iteration later on customs functions.
+First, we need templates, one for each loader that will be displayed. I decided to use shell arrays so we can iterate over them later in custom functions.
 
-So I ended with something like :
+Here's what I ended up with:
 
 ```
 # EMOJIS
@@ -64,13 +64,13 @@ dots10=( 0.04  '⢄' '⢂' '⢁' '⡁' '⡈' '⡐' '⡠' )
 dots11=( 0.04 '⠁' '⠂' '⠄' '⡀' '⢀' '⠠' '⠐' '⠈' )
 ```
 
-Array composition is divided in two parts, the first one is a `time` interval in seconds and the second one is the loader frame transition.
+Each array is split into two parts: the first element is a `time` interval in seconds, and the rest are the loader's frame transitions.
 
 ## Usage
 
-I wanted the library to be used as commands can be, by passing argument through options.
+I wanted the library to behave like a regular command, with arguments passed through options.
 
-First, let’s work on default `usage` function to display to the user.
+First, let's write the default `usage` function to display to the user.
 
 ```
 usage() {
@@ -85,7 +85,7 @@ EOF
 }
 ```
 
-I wanted to define argument options as below :
+Here's how I defined the argument options:
 
 ### Display help
 
@@ -98,7 +98,7 @@ Parameter : `-h --help`
 Type : Optional  
 Description : Show help usage
 
-### Chose loader
+### Choose loader
 
 ```
 # e.g
@@ -107,7 +107,7 @@ shloader -l arrow
 
 Parameter : `-l --loader`  
 Type : Optional  
-Description : Show a text message while displaying loader
+Description : Choose which loader to display
 
 ### Display info on loading
 
@@ -133,7 +133,7 @@ Description : Show an end text message when loader ends
 
 ## Parsing Arguments
 
-In order to work on user input, it is necessary to read option content, so we can have modular library execution.
+To handle user input, we need to parse the options passed in, so the library can run in a modular way.
 
 ```
 shloader() {
@@ -164,9 +164,9 @@ shloader() {
 }
 ```
 
-You might notice I’ve placed it directly in the main `function` so it will be the first element to be run.
+You'll notice I placed this directly inside the main function, so it's the first thing that runs.
 
-If user don’t specify loader, we should display one as default, let’s say `dots` one.
+If the user doesn't specify a loader, we fall back to a default, let's say the `dots` one.
 
 ```
 # shloader func
@@ -179,7 +179,7 @@ If user don’t specify loader, we should display one as default, let’s say `d
 […]
 ```
 
-One last thing here, I use a little custom `die` function to exit properly if an option is unknown.
+One last thing: I use a small custom `die` function to exit cleanly if an option is unknown.
 
 ```
 die() {
@@ -190,7 +190,7 @@ die() {
 
 ## Shell Configurations
 
-We will make some quick configuration on the top header script under `shebang`.
+Let's set up some quick configuration at the top of the script, right after the shebang.
 
 ```
 #!/bin/bash
@@ -201,15 +201,15 @@ trap end_shloader SIGINT SIGTERM ERR EXIT RETURN
 tput civis
 ```
 
-First, `set -Eeuo pipefail` so we can exit execution if one of the commands in the pipe fails.
+First, `set -Eeuo pipefail` makes sure execution stops if any command in a pipeline fails.
 
-Then, `trap end_shloader SIGINT SIGTERM ERR EXIT RETURN` so we can call a custom function to clean our execution on exiting, stopping, errors…
+Then, `trap end_shloader SIGINT SIGTERM ERR EXIT RETURN` lets us call a custom function to clean up on exit, whether that's a normal stop, an interrupt, or an error.
 
-Finally, `tput civis` is used to hide cursor.
+Finally, `tput civis` hides the cursor.
 
 ## Trap Error and Exit
 
-Trap will call a custom function, but how does it work ?
+The trap calls a custom function, but how does that actually work?
 
 ```
 end_shloader() {
@@ -221,13 +221,13 @@ end_shloader() {
 }
 ```
 
-Right here I ensure first to kill loader’s `PID` and restore cursor thanks to `tput cnorm`.
+Here I make sure to kill the loader's `PID` first, then restore the cursor with `tput cnorm`.
 
 ## Display Loader
 
-Now we can interact with shell output to generate loading animations.
+Now we can interact with shell output to actually generate the loading animation.
 
-Let’s create a new function `play_shloader()` :
+Let's create a new function, `play_shloader()`:
 
 ```
 play_shloader() {
@@ -240,11 +240,11 @@ play_shloader() {
 }
 ```
 
-Here we assume we have `loader` an array we can display during time duration defined in `speed` variable (we will see it after).
+Here we assume `loader` is an array we can display, with each frame shown for the duration set in the `speed` variable (more on that below).
 
 ## Call Loader
 
-What about now ? We have all bricks to make great loaders, let’s put them in work together !
+Now what? We have all the building blocks for great loaders, let's put them to work together.
 
 ```
 # shloader function
@@ -258,17 +258,17 @@ What about now ? We have all bricks to make great loaders, let’s put them in w
 […]
 ```
 
-What is done here ?
+What's happening here?
 
-We first print `loader` array content we save in `loader` variable. We know the first element in the array is time duration, so we save it in `speed` variable.
+We first read the `loader` array's content and save it into the `loader` variable. Since we know the first element is always the time duration, we save it separately in the `speed` variable.
 
-Now we have split array, we can remove time duration as it is now under `speed` variable. We then hide the cursor, call our `play_shloader` function and save `PID`.
+Now that the array is split, we can remove the time duration since it's already stored in `speed`. We then hide the cursor, call `play_shloader`, and save its `PID`.
 
-You can find the [Full Library Code](https://github.com/Kaderovski/shloader/blob/main/lib/shloader.sh)
+You can find the [Full Library Code](https://github.com/Kaderovski/shloader/blob/main/lib/shloader.sh) here.
 
 ## Script Library Integration
 
-Nothing hard here !
+Nothing complicated here.
 
 ```
 source ./lib/shloader.sh
@@ -278,7 +278,7 @@ shloader -l emoji_hour -m "Testing" -e "✨ All good !"
 end_shloader
 ```
 
-With more details :
+With a bit more detail:
 
 ```
 #!/bin/bash
@@ -311,5 +311,5 @@ end_shloader
 
 ## Conclusion
 
-As all things useless… it may become mandatory.
+Like most useless things, it may just end up indispensable.
 

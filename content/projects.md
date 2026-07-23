@@ -5,6 +5,7 @@ title: "Projects"
 ## My projects
 
 - [Keel](https://lebarondecharlus.github.io/keel/index.html) : Managed Jails alternative of Kubernetes for BSD systems, made in Rust.
+- [Bring Your Own image](/posts/bring-your-own-image/) : Allows you to boot any cloud (or not) images on a baremetal.
 
 ## Participated on
 

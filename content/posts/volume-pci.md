@@ -36,7 +36,7 @@ Mount it:
 mount /dev/{{disk}}1 /mnt
 ```
 
-To make this persistent across reboots, we'll need the volume's **UUID**. Let's grab the block ID.
+To make this persistent across reboots, we'll need the volume's **UUID**, which we can grab from the block ID.
 
 ```
 # blkid

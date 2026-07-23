@@ -5,7 +5,7 @@ tags: ["linux", "shell"]
 draft: false
 ---
 
-I've been looking for a way to shake up my routine a bit while working on my laptop, so I figured automatically changing my wallpaper at random would be a good way to break the monotony.
+I wanted to shake up my routine a bit while working on my laptop, so I figured automatically changing my wallpaper at random would be a good way to break the monotony.
 
 I use awesomeWM (version 4):
 
@@ -52,7 +52,7 @@ cp -f $IMAGE $AWPATH/wall.png
 # awful.util.spawn_with_shell("~/bin/wallpaper.sh")
 ```
 
-As noted in the comment, just add these two lines (or just the one, if you skip the comment) to call the script from awesomeWM's init.
+As noted in the comment, add these two lines (or just the last one, if you skip the comment) to call the script from awesomeWM's init.
 
 Put this at the end of `~/.config/awesome/rc.lua`.
 

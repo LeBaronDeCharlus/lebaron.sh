@@ -6,9 +6,11 @@ image: "/images/backstage-part-2/01-cover.jpg"
 draft: false
 ---
 
+![Backstage](/images/backstage-part-2/01-cover.jpg)
+
 In the previous article, we installed and ran our Backstage instance with Devbox. Now let’s dig into the configuration and set up GitHub authentication so we can actually log in to our app!
 
-Our initial setup concluded with the successful launch of a local Backstage application, accessible at [http://localhost:3000](http://localhost:3000).
+We left off with a working local Backstage application, accessible at [http://localhost:3000](http://localhost:3000).
 
 ***Missed Part 1?***
 
@@ -35,7 +37,7 @@ app-config.production.yaml
 app-config.yaml
 ```
 
-These different files are used to configure the different environments of your Backstage instance:
+These files configure the different environments of your Backstage instance:
 
 - **app-config.yaml** is the default configuration file. It's used if no other file is specified.
 - **app-config.local.yaml** is used for local development.
@@ -161,7 +163,7 @@ organization:
   name: My Medium Company
 ```
 
-Now, let’s configure the backend section and change the baseUrl, the port, and the database. We'll see how to configure the GitHub integration in the next section. Normally, you shouldn’t have to touch anything else here.
+Now, let’s configure the backend section and change the baseUrl, the port, and the database. We'll cover the GitHub integration in the next section; normally, you shouldn’t need to touch anything else here.
 
 ```yaml
 # app-config.yaml
@@ -187,15 +189,17 @@ There are two options for the database client, better-sqlite3 and PostgreSQL. We
 
 Now, let’s configure the integrations section and add GitHub!
 
-From Backstage’s documentation:
-
-Go to [this page](https://github.com/settings/applications/new) to create your OAuth App.
+Following Backstage’s documentation, go to [this page](https://github.com/settings/applications/new) to create your OAuth App.
 
 The “Homepage URL” should point to Backstage’s frontend, which in this article would be [http://localhost:3000](http://localhost:3000).
 
 The “Authorization callback URL” should point to the auth backend, which will most likely be [http://localhost:7007/api/auth/github/handler/frame](http://localhost:7007/api/auth/github/handler/frame).
 
+![Creating a GitHub OAuth App](/images/backstage-part-2/02-oauth-app.png)
+
 Now let’s add that information to our configuration file. Generate a client secret and copy your Client ID.
+
+![Finding the Client ID and generating a client secret](/images/backstage-part-2/03-client-secret.png)
 
 The config file:
 
@@ -253,7 +257,7 @@ Then, find **const app = createApp({** in this file, and add the following below
 
 ## Resolvers
 
-The last thing we need to do is to add a resolver to the auth configuration. This resolver will match the GitHub username with the Backstage user entity name.
+The last thing we need to do is add a resolver to the auth configuration. This resolver will match the GitHub username with the Backstage user entity name.
 
 In your **app-config.yaml** file, add this in your auth block.
 
@@ -302,7 +306,7 @@ backend.add(import('@backstage/plugin-auth-backend-module-github-provider'));
 
 Let’s add our GitHub user to the Backstage configuration so it’s allowed to connect.
 
-Let’s modify the file `/examples/org.yaml` and add this at the end.
+To do that, modify the file `/examples/org.yaml` and add this at the end.
 
 ```yaml
 ---
@@ -326,8 +330,14 @@ devbox run start
 
 Let’s head to our instance at [http://127.0.0.1:3000](http://127.0.0.1:3000)!
 
+![Signing in with GitHub](/images/backstage-part-2/04-signin.png)
+
 Allow access,
 
+![Authorizing the OAuth App](/images/backstage-part-2/05-allow-access.png)
+
 We did it!
+
+![Signed in and back in the Backstage catalog](/images/backstage-part-2/06-success.png)
 
 Stay tuned for Part Three, where we’ll configure GitHub auto-discovery so our repositories get imported automatically.

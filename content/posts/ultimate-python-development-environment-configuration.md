@@ -9,13 +9,13 @@ draft: false
 
 ## The Old way
 
-For years now, I’ve been using Python for a lot of different projects. My setup environment was quite simple, use `virtualenv` and work locally.
+For years, I've used Python for a lot of different projects. My setup was simple: use `virtualenv` and work locally.
 
-But I’ve faced few pain points by doing so. I was often forgetting to `source venv/bin/activate`, meaning I `pip install my-package` on my global system.
+But this approach came with a few pain points. I'd often forget to `source venv/bin/activate`, which meant I'd end up running `pip install my-package` on my global system instead.
 
-I also had bad secrets management by setting them not encrypted in a Shell script loaded at my program start.
+I also had poor secrets management, setting them unencrypted in a shell script loaded at program start.
 
-As bad as:
+As bad as this:
 
 ```
 export DB_NAME="db_name"
@@ -25,15 +25,15 @@ export DB_HOST=172.17.0.2
 export DB_PORT=3306
 ```
 
-Even if some great code editors can handle `python interpreters` in virtual environment, such as Vscode, I felt like my workflow automation was not as complete as it could be.
+Even though some great code editors, like VSCode, can handle Python interpreters inside a virtual environment, I felt my workflow automation still wasn't as complete as it could be.
 
 ## Direnv
 
-How to ensure not forgetting to load a virtual environment and install package globally while working on our project ?
+How do we make sure we never forget to load a virtual environment, or accidentally install a package globally while working on a project?
 
 ## What is direnv and how it works
 
-From official documentation
+From the official documentation:
 
 > *direnv is an extension for your shell. It augments existing shells with a new feature that can load and unload environment variables depending on the current directory. Before each prompt, direnv checks for the existence of a .envrc file (and optionally a .env file) in the current and parent directories. If the file exists (and is authorized), it is loaded into a bash sub-shell and all exported variables are then captured by direnv and then made available to the current shell.*
 
@@ -43,11 +43,11 @@ From official documentation
 
 ## direnv installation
 
-`direnv` is accessible through packages in almost all distributions.
+`direnv` is available as a package in almost all distributions.
 
 ## Package installation
 
-If you want a global system installation :
+For a global system installation:
 
 ```
 λ ~/ sudo apt-get install direnv
@@ -55,7 +55,7 @@ If you want a global system installation :
 
 ## Manual installation
 
-If you want custom installation, take a look on this [script](https://direnv.net/install.sh) hosted by direnv official documentation.
+For a custom installation, take a look at this [script](https://direnv.net/install.sh) hosted by the official direnv documentation.
 
 ```
 λ ~/ curl -sfL https://direnv.net/install.sh | bash
@@ -63,9 +63,9 @@ If you want custom installation, take a look on this [script](https://direnv.net
 
 ## Shell configuration
 
-Once `direnv` is installed you need to configure your `$SHELL` in order to hook it with your default shell. It supports `bash`, `zsh`, `fish`, `tcsh` and `elvish`.
+Once `direnv` is installed, you need to configure your `$SHELL` to hook it into your default shell. It supports `bash`, `zsh`, `fish`, `tcsh`, and `elvish`.
 
-*e.g with zsh*
+*e.g. with zsh*
 
 ```
 λ ~/ echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
@@ -74,27 +74,27 @@ Once `direnv` is installed you need to configure your `$SHELL` in order to hook 
 
 ## How python works with direnv
 
-We can load a Python virtual environment thanks to `direnv`, to do so we need to specify `layout` command in a `.envrc` file located at our root project.
+We can load a Python virtual environment thanks to `direnv`. To do so, we need to specify the `layout` command in a `.envrc` file located at our project root.
 
-Let’s create our project directory first.
+Let's create our project directory first.
 
 ```
 λ ~/ mkdir project && cd project
 ```
 
-Creat our `.envrc` file.
+Create our `.envrc` file.
 
 ```
 λ ~/project/ echo 'layout python3' > .envrc
 ```
 
-You will notice an error message like :
+You'll notice an error message like this:
 
 ```
 direnv: error project/.envrc is blocked. Run `direnv allow` to approve its content
 ```
 
-This is a security way to block default content in your file. You can allow it thanks to :
+This is a security measure to block default content in the file. You can allow it with:
 
 ```
 λ ~/project/ direnv allow
@@ -102,16 +102,16 @@ direnv: loading ~/project/.envrc
 direnv: export +VIRTUAL_ENV ~PATH
 ```
 
-Output inform us that virtual environment was automatically created for us. You won’t see any prompt modification (as `virtualenv` does while `source venv/bin/activate`) it’s normal.
+The output tells us the virtual environment was created automatically. You won't see any prompt modification like `virtualenv` gives you with `source venv/bin/activate`, that's normal.
 
-Quick check of our Python binary with :
+Quick check of our Python binary:
 
 ```
 λ ~/project/ which python
 project/.direnv/python-3.10.4/bin/python
 ```
 
-You can then work as you normally do through `venv` by installing your python dependencies.
+You can then work as you normally would with a `venv`, installing your Python dependencies as usual.
 
 ```
 # install a single package
@@ -120,24 +120,24 @@ You can then work as you normally do through `venv` by installing your python de
 λ ~/project/ pip install -r requirements.txt
 ```
 
-*Note: we will no longer use `pip` but `poetry`, see Poetry section on this post for more information.*
+*Note: we'll stop using `pip` in favor of `poetry`, see the Poetry section below for more details.*
 
-Just to be clear, `direnv` will automatically load your virtual environement when you move in your project directory. As soon as you will move out, environment will also be automatically deactivated.
+Just to be clear: `direnv` automatically loads your virtual environment when you move into your project directory, and automatically deactivates it as soon as you move out.
 
 ```
 λ ~/project/ cd 
 direnv: unloading
 ```
 
-That’s could be enough for common use if you don’t need a specific Python version other than one installed on your system, in some cases you will want to work with specific versions, that’s why we need `pyenv`.
+That's enough for common use if you don't need a specific Python version beyond what's already installed on your system. But sometimes you'll want to work with specific versions, which is where `pyenv` comes in.
 
 ## Pyenv
 
-`pyenv` lets you easily switch between multiple versions of Python. It’s simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well. It allows you to change Python version for each project and it supported by `direnv` since `2.21.0`.
+`pyenv` lets you easily switch between multiple versions of Python. It's simple, unobtrusive, and follows the Unix tradition of single-purpose tools that do one thing well. It lets you set a Python version per project, and has been supported by `direnv` since `2.21.0`.
 
 ## Installation and Configuration
 
-Get `pyenv` :
+Get `pyenv`:
 
 ```
 λ ~/ curl -L https://pyenv.run | bash
@@ -145,7 +145,7 @@ Get `pyenv` :
 
 Configure your $SHELL.
 
-*e.g with zsh*
+*e.g. with zsh*
 
 ```
 λ ~/ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
@@ -160,7 +160,7 @@ Check installation:
 pyenv 2.3.1
 ```
 
-And install latest Python version at this date `3.10.5`:
+And install the latest Python version available at the time of writing, `3.10.5`:
 
 ```
 λ ~/ pyenv install 3.10.5
@@ -168,7 +168,7 @@ And install latest Python version at this date `3.10.5`:
 
 ## Use pyenv with direnv
 
-Now `pyenv` is installed, let’s interface it with our project and `direnv`.
+Now that `pyenv` is installed, let's hook it up with our project and `direnv`.
 
 ```
 λ ~/ cd project/
@@ -176,7 +176,7 @@ Now `pyenv` is installed, let’s interface it with our project and `direnv`.
 λ ~/ direnv allow
 ```
 
-Check our Python version and interpreter :
+Check our Python version and interpreter:
 
 ```
 λ ~/project/ python --version && which python
@@ -192,7 +192,7 @@ That’s it.
 
 Poetry is a tool for dependency management and packaging in Python. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you.
 
-Poetry will in fact replace `pip` usage and provide several useful advantages such as :
+Poetry effectively replaces `pip` and brings several useful advantages, such as:
 
 - one configuration file for all dependencies and their configs
 - *can create and manage virtual environments* (true, but we manage with `direnv` instead)
@@ -200,7 +200,7 @@ Poetry will in fact replace `pip` usage and provide several useful advantages su
 
 ## Poetry installation
 
-Poetry documentation provides installation guidelines and has a part for **osx/linux/bashonwindows** distributions :
+The Poetry documentation provides installation guidelines, including a section for **osx/linux/bashonwindows** distributions:
 
 ```
 λ ~/ curl -sSL https://install.python-poetry.org | python3 -
@@ -218,7 +218,7 @@ You can test that everything is set up by executing:
 `poetry --version`
 ```
 
-You can check your installation and `poetry` version :
+You can check your installation and `poetry` version:
 
 ```
 λ ~/ poetry --version 
@@ -227,16 +227,16 @@ Poetry version 1.1.13
 
 ## Poetry shell Configuration
 
-You can enable tab completion for your shell. [This documentation](https://python-poetry.org/docs/#enable-tab-completion-for-bash-fish-or-zsh) has guide for each shell.
+You can enable tab completion for your shell. [This documentation](https://python-poetry.org/docs/#enable-tab-completion-for-bash-fish-or-zsh) has a guide for each shell.
 
-*e.g with ZSH and Oh-my-zsh*
+*e.g. with ZSH and Oh-my-zsh*
 
 ```
 λ ~/ mkdir $ZSH_CUSTOM/plugins/poetry
 poetry completions zsh > $ZSH_CUSTOM/plugins/poetry/_poetry
 ```
 
-For oh-my-zsh, you must then enable poetry in your ~/.zshrc plugins
+For oh-my-zsh, you then need to enable the poetry plugin in your ~/.zshrc:
 
 ```
 plugins(
@@ -247,7 +247,7 @@ plugins(
 
 ## Poetry usage
 
-From `poetry` documentation, you can use it for new project and|or existing one.
+According to the `poetry` documentation, you can use it for a new project and/or an existing one.
 
 ## New project
 
@@ -269,16 +269,16 @@ poetry-demo
 
 ## Existing project
 
-Instead of creating a new project, Poetry can be used to ‘initialise’ a pre-populated directory. To interactively create a `pyproject.toml` file in directory pre-existing-project :
+Instead of creating a new project, Poetry can be used to 'initialize' a pre-populated directory. To interactively create a `pyproject.toml` file in an existing directory:
 
 ```
 λ ~/ cd project
 λ ~/project/ poetry init
 ```
 
-## Add dependecies
+## Add dependencies
 
-As simple as :
+As simple as:
 
 ```
 λ ~/project/ poetry add django
@@ -292,9 +292,9 @@ Package operations: 3 installs, 0 updates, 0 removals
   • Installing django (4.0.5)
 ```
 
-It will automatically find a suitable version constraint and install the package and sub-dependencies.
+It automatically finds a suitable version constraint and installs the package along with its sub-dependencies.
 
-Find details on your `toml` config file :
+Find the details in your `toml` config file:
 
 ```
 λ ~/project/ cat pyproject.toml 
@@ -314,11 +314,11 @@ build-backend = "poetry.core.masonry.api"
 
 ## Link Poetry with direnv
 
-From `poetry` documentation :
+From the `poetry` documentation:
 
 > *By default, poetry creates a virtual environment in {cache-dir}/virtualenvs ({cache-dir}\virtualenvs on Windows). You can change the cache-dir value by editing the poetry config. Additionally, you can use the virtualenvs.in-project configuration variable to create virtual environment within your project directory.*
 
-What we want here, is to tell `poetry` not to configure its own environment but to use our previous `direnv` configuration.
+What we want here is to tell `poetry` not to configure its own environment, but to use the `direnv` configuration we already set up.
 
 ```
 # .envrc
@@ -339,9 +339,9 @@ if [ ! -L .venv ]; then
 fi
 ```
 
-Let’s allow our `direnv` and check that we are using our correct environment.
+Let's allow `direnv` and check that we're using the right environment.
 
-For our example with django, we should be able to retrieve our dependencie in `.direnv` folder.
+For our Django example, we should be able to find the dependency inside the `.direnv` folder.
 
 ```
 λ ~/project/ find .direnv -name 'django'  
@@ -352,13 +352,13 @@ For our example with django, we should be able to retrieve our dependencie in `.
 
 ## GPG
 
-Remember about managing secrets ? Now that we have our virtual environements set, how can we manage to work with secrets without write them directly in our project/repository ?
+Remember the secrets management problem? Now that our virtual environments are set up, how do we work with secrets without writing them directly into our project or repository?
 
-Before we can use a password manager such as `pass` we need a `gpg key id`.
+Before we can use a password manager like `pass`, we need a `gpg` key ID.
 
 ## Generate a key
 
-Let’s first generete one.
+Let's generate one first.
 
 ```
 λ ~/ gpg --full-generate-key
@@ -400,7 +400,7 @@ sub   rsa3072 2022-06-10 [E]
 
 ## Get key ID
 
-We can then list our new key :
+We can then list our new key:
 
 ```
 λ ~/ gpg --list-keys
@@ -417,13 +417,13 @@ sub   rsa3072 2022-06-10 [E]
 
 ## Pass
 
-`pass` is the standard unix password manager.
+`pass` is the standard Unix password manager.
 
 > *With pass, each password lives inside of a gpg encrypted file whose filename is the title of the website or resource that requires the password. These encrypted files may be organized into meaningful folder hierarchies, copied from computer to computer, and, in general, manipulated using standard command line file management utilities.*
 
 ## Pass installation
 
-`pass` is available in almost all distribution and can be installed as follow:
+`pass` is available in almost all distributions and can be installed like this:
 
 ```
 λ ~/ sudo apt-get install pass
@@ -431,7 +431,7 @@ sub   rsa3072 2022-06-10 [E]
 
 ## Pass usage
 
-Now that we have `pass` installed on our system **and** a valid `gpg_key_id` we can init our password manager with :
+Now that we have `pass` installed on our system **and** a valid `gpg_key_id`, we can initialize our password manager with:
 
 ```
 λ ~/ pass init DC3EC748A8D97169F47C16690854057891EFB8F0
@@ -439,7 +439,7 @@ mkdir: created directory '$HOME/.password-store/'
 Password store initialized for DC3EC748A8D97169F47C16690854057891EFB8F0
 ```
 
-Let’s insert our first password :
+Let's insert our first password:
 
 ```
 λ ~/ pass insert kaderovski.com/blog/some_secret
@@ -449,7 +449,7 @@ Enter password for kaderovski.com/blog/some_secret:
 Retype password for kaderovski.com/blog/some_secret:
 ```
 
-Our password is now store in our `pass` :
+Our password is now stored in `pass`:
 
 ```
 λ ~/ pass
@@ -459,7 +459,7 @@ Password Store
         `-- some_secret
 ```
 
-You can get your secret by typing and entering your gpg secret passphrase :
+You can retrieve your secret by entering your GPG passphrase:
 
 ```
 λ ~/ pass show kaderovski.com/blog/some_secret
@@ -468,13 +468,13 @@ my_secret
 
 ## Tomb
 
-Due to the structure of pass, file and directory names are not encrypted in the password store. `pass-tomb` provides a convenient solution to put your password store in a Tomb and then keep your password tree encrypted when you are not using it.
+Due to how `pass` is structured, file and directory names aren't encrypted in the password store. `pass-tomb` offers a convenient solution: it puts your password store inside a Tomb, keeping your password tree encrypted when you're not using it.
 
-It uses the same GPG key to encrypt passwords and tomb, therefore you don’t need to manage more key or secret. Moreover, you can ask pass-tomb to automatically close your store after a given time.
+It uses the same GPG key to encrypt both the passwords and the tomb, so you don't need to manage an extra key or secret. You can also configure `pass-tomb` to automatically close the store after a given time.
 
 ## Tomb installation
 
-You can use package installation on your distribution :
+You can install it as a package on your distribution:
 
 ```
 λ ~/ sudo apt install pass-extension-tomb
@@ -484,7 +484,7 @@ You can use package installation on your distribution :
 
 Create a new password tomb:
 
-*e.g*
+*e.g.*
 
 ```
 > pass tomb DC3EC748A8D97169F47C16690854057891EFB8F0
@@ -515,9 +515,9 @@ You can now use the best part of `pass-tomb`:
   .  Your passwords remain present in $HOME/.password.tomb.
 ```
 
-Let’s check what is happening with `open` and `close` options.
+Let's check what actually happens with the `open` and `close` commands.
 
-When our `tomb` is closed, `pass` command and our passwords path looks like this:
+When the `tomb` is closed, the `pass` command and our password path look like this:
 
 ```
 λ ~/ pass
@@ -529,9 +529,9 @@ Password Store
 1 directory, 0 files
 ```
 
-We can not see our key:value (path/password-name) elements on output and filesystem.
+We can't see our key:value (path/password-name) elements in the output or on the filesystem.
 
-When opening our `tomb` we are decrypting our password database :
+When we open the `tomb`, we decrypt our password database:
 
 ```
 λ ~/ pass ; tree .password-store/
@@ -548,9 +548,9 @@ Password Store
 
 ## Secrets with direnv and pass
 
-We can now manage to use our `secrets` in our Python code thanks to `direnv` and `pass`.
+We can now use our secrets in our Python code thanks to `direnv` and `pass`.
 
-We need to modify a bit our `.envrc` in our project directory by checking if the `tomb` is open or not. I’m doing it by checking if I can `stat` my `$HOME/.password-store/.gpg-id` which is possible when the `tomb` is open. If not it means `tomb` is close and need to be open.
+We need to slightly modify the `.envrc` in our project directory to check whether the `tomb` is open. I do this by checking if I can `stat` `$HOME/.password-store/.gpg-id`, which only succeeds when the `tomb` is open. If it fails, the `tomb` is closed and needs to be opened.
 
 ```
 # .envrc
@@ -589,16 +589,16 @@ direnv: loading ~/project/.envrc
 direnv: export +MY_SECRET +VIRTUAL_ENV ~PATH
 ```
 
-Notice here `+MY_SECRET` in the output, telling us it is accessible through our environment.
+Notice `+MY_SECRET` in the output, telling us it's now accessible through our environment.
 
-We can try to reach our secret :
+We can try to reach our secret:
 
 ```
 λ ~/project/ echo $MY_SECRET
 my_secret
 ```
 
-What is really important here is that **we are not storing clear secrets** in our code, project or repo. All our secrets will be reachable through our virtual environment and can be used in you Python code like this :
+What really matters here is that **we are not storing plaintext secrets** in our code, project, or repo. All our secrets are reachable through our virtual environment and can be used in your Python code like this:
 
 ```
 >>> import os
@@ -609,13 +609,13 @@ my_secret
 
 ## Direnv advanced configurations
 
-In more complex projects you may need `commands`, `external dependencies`, `third-party`, or `third-party configuration`. Let’s see how we can manage them with `direnv`.
+In more complex projects, you may need commands, external dependencies, third-party binaries, or third-party configuration. Let's see how we can manage these with `direnv`.
 
 ## Check for commands dependencies
 
-In your `.envrc` file, you can ensure you can use and reach some commands needed in your project.
+In your `.envrc` file, you can make sure the commands your project needs are actually available.
 
-You can do as follow:
+You can do it like this:
 
 ```
 # .envrc
@@ -653,9 +653,9 @@ done
 
 ## Third-party binaries
 
-We can arrange to use specific third-party binaries such as `packer`, `terraform`, `vault` etc…
+We can also set things up to use specific third-party binaries, such as `packer`, `terraform`, `vault`, and so on.
 
-We will tell `.direnv` to use `PATH` in order to place our third-party binaries in `.direnv/bin` path.
+We'll tell `direnv` to extend `PATH` so our third-party binaries live under the `.direnv/bin` path.
 
 Let’s grab our `.envrc` file again:
 
@@ -699,7 +699,7 @@ fi
 export PATH="${DIRENV_BIN_DIR}:${PATH}"
 ```
 
-Now install our binary, let’s try it with `packer` Hashicorp binary :
+Now let's install a binary, we'll try it with HashiCorp's `packer`:
 
 ```
 # .envrc
@@ -754,7 +754,7 @@ if [ ! -e "${DIRENV_BIN_DIR}/packer" ]; then
 fi
 ```
 
-Let’s try out our new configuration :
+Let's try out our new configuration:
 
 ```
 λ ~/project direnv allow
@@ -765,7 +765,7 @@ Archive:  ~/project/.direnv/packer_1.8.1_linux_amd64.zip
 direnv: export +MY_SECRET +VIRTUAL_ENV ~PATH
 ```
 
-Now `packer` is installed in our `PATH` let’s locate it and run it :
+Now that `packer` is installed in our `PATH`, let's locate it and run it:
 
 ```
 λ ~/project/ which packer
@@ -774,13 +774,13 @@ Now `packer` is installed in our `PATH` let’s locate it and run it :
 1.8.1
 ```
 
-If in the futur you need to change `packer` version you just have to remove your current `packer` binary and modify `PACKER_VERSION` variable to rebuild your `direnv`.
+If you need to change the `packer` version in the future, just remove the current `packer` binary and update the `PACKER_VERSION` variable to rebuild your `direnv` setup.
 
 ## Third-party configs
 
-Of course, if our third-party need custom (or not) configurations we can specify them in our `.envrc` but to keep pour code clear and organized we also can split our configs into subfiles.
+Of course, if our third-party tools need custom configuration, we can specify it directly in our `.envrc`. But to keep things clear and organized, we can also split our config into separate subfiles.
 
-By adding this block at the end of our `.envrc` file :
+By adding this block at the end of our `.envrc` file:
 
 ```
 # .envrc 
@@ -794,7 +794,7 @@ for addon in ${ENV_ADDONS}; do
 done
 ```
 
-And then create your addons custom config file :
+And then create your custom addon config files:
 
 ```
 # .env.packer
@@ -813,7 +813,7 @@ Don’t forget to reload:
 
 ## Final template
 
-Here is a final `.envrc` template you can grab and edit for your needs :
+Here is a final `.envrc` template you can grab and adapt to your needs:
 
 ```
 # .envrc
@@ -877,13 +877,13 @@ done
 
 ## Conclusion
 
-Yes this require a bit of knowledge and a some configurations to be efficient in this workflow, but keep in mind that all will be configured automatically and will be more easier version controlled.
+Yes, this requires a bit of knowledge and some configuration to get comfortable with this workflow, but keep in mind that everything ends up automated and much easier to version control.
 
-You can arrange in order to put your application in production area to share your GPG key or to manage multiple GPG key in a same `pass` (*eg one GPG ID for each team member*), version your pass and make it a git version accessible.
+For production, you can arrange to share your GPG key, or manage multiple GPG keys within the same `pass` store (*e.g. one GPG ID per team member*), then version your `pass` store and make it accessible through git.
 
-All dependencies, with the same packages will be deployed exactly as your developpment area.
+All dependencies, with the exact same package versions, will be deployed exactly as in your development environment.
 
 Keep it simple.
 
-Starter template is available [here](https://gist.github.com/lebarondecharlus/f91f4c29a5f655920d4c65a62eb275b0).
+A starter template is available [here](https://gist.github.com/lebarondecharlus/f91f4c29a5f655920d4c65a62eb275b0).
 

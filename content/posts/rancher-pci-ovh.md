@@ -5,28 +5,27 @@ tags: ["containers", "ovh"]
 draft: false
 ---
 
-The world of hosting is changing, and so is the world of application development. Today we are turning less and less to dedicated hosting for a single application, but more to build the infrastructure that will support it. 
+The hosting world is changing, and so is the way we build applications. We're turning less and less to dedicated hosting for a single application, and more toward building the infrastructure that will support it.
 
-In this sense, we prefer to use an Iaas solution on dedicated "bare metal" for our application overlay than pure "bare metal" per service.
+In practice, this means favoring an IaaS layer on top of dedicated "bare metal" for our application overlay, rather than provisioning pure "bare metal" per service.
 
-Application deployment missions pushed by developers must fit with the technology and logic of production. Which `pipelines` should we use for our `CI`, `CD` ?
+The deployments developers push need to fit the technology and logic of production. Which `pipelines` should we use for `CI`/`CD`?
 
-This post will not aim at answering the question of the pipelines to be implemented, it will be a question of `Ranching`, coupled with its `Cattle` orchestrator, on Public Cloud OVH `Openstack`.
+This post won't try to answer the pipeline question. Instead, it's about `Rancher`, paired with its `Cattle` orchestrator, running on OVH Public Cloud `OpenStack`.
 
-### Installation :
+### Installation
 
-
-The installation of `PCI` (Public Cloud) instances is the fastest step. We need to start with 5 instances:
+Spinning up the `PCI` (Public Cloud) instances is the fastest part. We'll start with 5 instances:
 
 - 1 LoadBalancer/ReverseProxy (`HA-Proxy` or `Nginx`) for €2.99
-- 3 RancherServer in Cluster under `Galera` at 5€99
-- 1 Node Worker (for our applications) at the price you want to put for your performance
+- 3 RancherServer instances clustered under `Galera` at €5.99 each
+- 1 Worker node (for our applications), sized to whatever performance you need
 
-#### LoadBalancer Nginx :
+#### LoadBalancer Nginx
 
-For Nginx installation, nothing very complex, a €2.99 instance will be more than enough since the only job of the server will be to forward the request to our rancher cluster.
+Setting up Nginx is straightforward: a €2.99 instance is more than enough, since the server's only job is to forward requests to our Rancher cluster.
 
-The conf file will be :
+Here's the config file:
 
 ```nginx
 upstream rancher {
@@ -66,35 +65,34 @@ server {
 }
 ```
 
-Replace the `upstream` by the ips of your servers.
+Replace the `upstream` block with your servers' IPs.
 
-Note that it is also possible to dockerize this service. This way, the day you put a second LB on the front end, there will only be one container to place on your instance.
+You can also dockerize this service. That way, if you later add a second load balancer on the front end, it's just one more container to deploy on your instance.
 
-#### Rancher installation :
+#### Rancher installation
 
-For Rancher part, there are no great difficulties either. 5€99 instances will be more than enough for the needs.
+The Rancher side isn't much harder either. The €5.99 instances are more than enough for what we need.
 
-I recommend the [official Rancher documentation](http://rancher.com/docs/rancher/v1.0/en/installing-rancher/installing-server/multi-nodes/) on this subject.
+I'd recommend following the [official Rancher documentation](http://rancher.com/docs/rancher/v1.0/en/installing-rancher/installing-server/multi-nodes/) for this part.
 
-We will start by deploying on each Rancher server:
+Start by deploying this on each Rancher server:
 
 ```bash
 sudo docker run -d --restart=unless-stopped -p 8080:8080 rancher/server
 ```
 
 
-Then we will add the servers to each other via the UI. (Infrastructure > Hosts > Add Host)
+Then add the servers to each other through the UI (Infrastructure > Hosts > Add Host).
 
-You should get the following code to run on each node :
+You'll get a command like this to run on each node:
 
 ```bash
 sudo docker run -e CATTLE_AGENT_IP="1.2.3.4"  -e CATTLE_HOST_LABELS='galera=true'  --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.5 http://1.2.3.4:8080/v1/scripts/4956918455D4D9BE3AF1:1483142400000:Fscj9CvRSrx0mS05E4kdWDkb0E
 ```
 
-Once this step is done, it will then be possible to use the `Galera` image proposed by Rancher (in the catalog) on our 3 servers.
-A node will then be present on each server.
+Once that's done, you can deploy the `Galera` image from Rancher's catalog on all 3 servers, giving each server its own node.
 
-We will be able to initialize the cluster on a Galera node:
+We can now initialize the cluster from one Galera node:
 
 ```
 > CREATE DATABASE IF NOT EXISTS cattle COLLATE = 'utf8_general_ci' CHARACTER SET = 'utf8';
@@ -102,9 +100,9 @@ We will be able to initialize the cluster on a Galera node:
 > GRANT ALL ON cattle.* TO 'cattle'@'localhost' IDENTIFIED BY 'cattle';
 ```
 
-Then check on the other two servers that the basic entries are also present.
+Then check the other two servers to confirm the same entries are present.
 
-Then let's stop one Rancher server and start it using Galera for persistence of its data :
+Now stop one Rancher server and restart it using Galera for data persistence:
 
 ```bash
 sudo docker run -d --restart=unless-stopped -p 8080:8080 rancher/server \
@@ -121,20 +119,18 @@ Where :
 --db-name               nom de la base MySQL (default: cattle)
 ```
 
-Do the same for the other two servers so each Rancher launches using the Galera database.
+Do the same on the other two servers so each Rancher instance starts using the Galera database.
 
-It is possible to check if Rancher is `clustered` via the UI in: Admin > High Availability.
+You can confirm Rancher is `clustered` via the UI, under Admin > High Availability.
 
-#### Addition of Worker Nodes.
+#### Adding Worker Nodes
 
-You now have your `Rancher` cluster with a front-end LB, it is now possible to add `Worker` nodes to your cluster.
-It's very easy to add them directly with the Rancher utility. Now it's up to you to see which type of instance best suits your resource needs.
+With your `Rancher` cluster and front-end LB now in place, you can add `Worker` nodes to your cluster. This is easy to do directly from the Rancher utility, so it's really just up to you to pick the instance type that best suits your resource needs.
 
-Rancher's default environment uses the `Cattle` orchestrator, so once your Workers nodes are configured, you can deploy your `Docker` containers directly from your cluster.
+Rancher's default environment uses the `Cattle` orchestrator, so once your Worker nodes are configured, you can deploy `Docker` containers directly from your cluster.
 
 ### Conclusion
 
-The installation of a Rancher environment is fast, the Public Cloud OVH allows to quickly deploy the necessary instances of Rancher.
-The ease of use offered by the Rancher/Cattle duo allows an efficient and fluid commissioning.
+Setting up a Rancher environment is fast: OVH Public Cloud lets you deploy the instances you need in no time. The ease of use the Rancher/Cattle duo offers makes for smooth, efficient commissioning.
 
-We will see in a next article how to set up an HA environment with `Kubernetes`, still under the OVH PCI and using the environment template proposed by Rancher.
+In a future article, we'll look at setting up an HA environment with `Kubernetes`, still on OVH PCI, using the environment template Rancher provides.

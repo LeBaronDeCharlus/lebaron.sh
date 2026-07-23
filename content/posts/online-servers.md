@@ -5,14 +5,13 @@ tags: ["shell"]
 draft: false
 ---
 
-We need servers at Online, but there is no availability!
-So they came to ask me if I didn't have a magic solution...
+We needed servers at Online, but there was no availability! So they came to ask me if I had some kind of magic solution...
 
-A little `bash`... a `notify` in this case `Slack` and here we go!
+A bit of `bash`, a `notify` (in this case `Slack`), and here we go!
 
-#### Dirty way 
+#### Dirty way
 
-To be alerted via slack you have to create an [incoming-webhook](https://my.slack.com/services/new/incoming-webhook/) which will generate a link.
+To get alerted via Slack, you need to create an [incoming-webhook](https://my.slack.com/services/new/incoming-webhook/), which will generate a link.
 
 For an XC 2016 series server:
 
@@ -20,11 +19,11 @@ For an XC 2016 series server:
 text="DISPO : https://www.online.net/fr/serveur-dedie/dedibox-xc"; json="{\"channel\": \"#infra\", \"text\": \"$text\"}" ; while true ; do curl --silent https://www.online.net/fr/serveur-dedie  | grep '<button class="btn btn--primary js-order-dedibox"' | grep -i 'xc 2016' | grep -i 'victime' || curl -s -d "payload=$json" "https://hooks.slack.com/services/XXX/XXXX/XXXX/XXXX" ; sleep 5 ; done
 ```
 
-Curl will be done only if one server is available.
+The curl only fires if a server is actually available.
 
-#### Clean way 
+#### Clean way
 
-Just code formating :
+Just some code formatting:
 ```bash
 #!/bin/bash
 
@@ -44,14 +43,14 @@ while true
 done
 ```
 
-You can also push the vice further by filtering on the **region** and the **disc types**.
+You can also go the extra mile by filtering on **region** and **disk type**.
 
 #### Pig mode
 
-Because... why not ?
+Because, why not?
 
 ```bash
 text="DISPO https://www.online.net/fr/serveur-dedie/dedibox-xc"; json="{\"channel\": \"#test\", \"text\": \"$text\"}" ; while true ; do curl --silent https://www.online.net/fr/serveur-dedie/dedibox-xc | egrep -io '<option value="\w+">ssd / france / dc2</option>' && curl -s -d "payload=$json" "https://hooks.slack.com/services/XXX/XXXX/XXXX" ; sleep 5 ; done
 ```
 
-Next step, simulate an order ?
+Next step: simulate an order?

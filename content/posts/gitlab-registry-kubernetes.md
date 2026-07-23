@@ -5,10 +5,10 @@ tags: ["containers"]
 draft: false
 ---
 
-Now that Gitlab offers its own image registry, it is possible to use it directly in our K8s environment!
-If you missed the info (which is starting to date now), I refer you to [this article](https://about.gitlab.com/2016/05/23/gitlab-container-registry/).
+Now that GitLab offers its own image registry, we can use it directly in our K8s environment.
+If you missed the announcement (it's a bit dated by now), check out [this article](https://about.gitlab.com/2016/05/23/gitlab-container-registry/).
 
-To add the Gitlab private registry in Kubernetes you have to create a secret :
+To add the GitLab private registry to Kubernetes, you first need to create a secret:
 
 ```
 > kubectl create secret docker-registry regsecret --docker-server=registry.gitlab.xyz --docker-username='' --docker-password='' --docker-email=""
@@ -23,7 +23,7 @@ Where :
 --docker-email          son email
 ```
 
-We will check secret creation :
+Let's check that the secret was created:
 
 ```
 > kubectl get secret regsecret
@@ -31,7 +31,7 @@ NAME        TYPE                      DATA      AGE
 regsecret   kubernetes.io/dockercfg   1         19h
 ```
 
-Show details :
+To see the details:
 
 ```
 > kubectl get secret regsecret --output=yaml
@@ -49,9 +49,9 @@ metadata:
 type: kubernetes.io/dockercfg
 ```
 
-It’s now possible to use images from your registry directly in your `deployment`.
+Now you can use images from your registry directly in your `deployment`.
 
-Example
+For example:
 
 ```yaml
 apiVersion: apps/v1beta1 
@@ -76,11 +76,11 @@ spec:
         - name: regsecret
 ```
 
-See where we call `secret` : 
+Here's where the secret gets referenced:
 
 ```yaml
 imagePullSecrets:
   - name: regsecret
 ```
 
-Enjoy !
+Enjoy!
